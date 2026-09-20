@@ -2,132 +2,248 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>چت آنلاین</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+margin:0;
+padding:0;
+width:100%;
+height:100%;
+font-family:Tahoma,Arial,sans-serif;
+background:#0d1117;
+color:#fff;
+overflow:hidden;
+}
 
 body{
-margin:0;
-font-family:Tahoma,Arial,sans-serif;
-background:#10131a;
-color:#fff;
-height:100vh;
-overflow:hidden;
+display:flex;
+justify-content:center;
 }
 
 .app{
 width:100%;
-max-width:700px;
-height:100vh;
-margin:auto;
+max-width:520px;
+height:100dvh;
+background:#151a23;
 display:flex;
 flex-direction:column;
-background:#171b24;
+position:relative;
+overflow:hidden;
 }
 
+/* =========================
+HEADER
+========================= */
+
 .header{
-padding:16px;
+height:65px;
+min-height:65px;
+padding:0 15px;
 background:#202633;
 border-bottom:1px solid #303746;
 display:flex;
-justify-content:space-between;
 align-items:center;
+justify-content:space-between;
+}
+
+.header-right{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.chat-icon{
+width:40px;
+height:40px;
+border-radius:50%;
+background:#3478f6;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+}
+
+.title-box{
+display:flex;
+flex-direction:column;
 }
 
 .title{
-font-size:20px;
+font-size:16px;
 font-weight:bold;
 }
 
 .status{
-font-size:12px;
+font-size:11px;
 color:#69e58a;
+margin-top:3px;
 }
+
+/* =========================
+MESSAGES
+========================= */
 
 .messages{
 flex:1;
 overflow-y:auto;
-padding:15px;
+padding:15px 12px 10px;
 display:flex;
 flex-direction:column;
-gap:10px;
+gap:9px;
+scroll-behavior:smooth;
+}
+
+.messages::-webkit-scrollbar{
+width:3px;
+}
+
+.messages::-webkit-scrollbar-thumb{
+background:#394354;
+border-radius:10px;
 }
 
 .message{
+width:fit-content;
+max-width:88%;
 background:#252c3a;
-border-radius:14px;
-padding:10px 13px;
-max-width:85%;
+border-radius:15px;
+padding:9px 12px;
+box-shadow:0 2px 5px rgba(0,0,0,.15);
+position:relative;
+}
+
+.message.mine{
+background:#235bb5;
+align-self:flex-start;
+border-bottom-right-radius:4px;
+}
+
+.message.other{
+align-self:flex-end;
+border-bottom-left-radius:4px;
 }
 
 .username{
 color:#66aaff;
-font-size:13px;
+font-size:12px;
 font-weight:bold;
-margin-bottom:5px;
+margin-bottom:4px;
+}
+
+.mine .username{
+color:#bcd7ff;
 }
 
 .text{
-font-size:15px;
-line-height:1.6;
+font-size:14px;
+line-height:1.7;
 word-break:break-word;
+white-space:pre-wrap;
 }
 
 .time{
 color:#8992a3;
+font-size:9px;
+margin-top:4px;
+}
+
+.mine .time{
+color:#c6d9f7;
+}
+
+.message-actions{
+display:flex;
+gap:5px;
+margin-top:7px;
+border-top:1px solid rgba(255,255,255,.1);
+padding-top:6px;
+}
+
+.delete-message{
+border:0;
+background:#d9363e;
+color:#fff;
+border-radius:7px;
+padding:4px 8px;
 font-size:10px;
-margin-top:5px;
+cursor:pointer;
 }
 
 .empty{
 margin:auto;
 color:#8992a3;
+text-align:center;
+font-size:13px;
 }
 
+/* =========================
+INPUT
+========================= */
+
 .input-area{
-padding:12px;
+padding:10px;
+padding-bottom:calc(10px + env(safe-area-inset-bottom));
 background:#202633;
 border-top:1px solid #303746;
 }
 
 .form{
 display:flex;
-gap:8px;
+gap:7px;
 }
 
 .input{
 flex:1;
+min-width:0;
 border:0;
 outline:0;
-border-radius:12px;
-padding:13px;
+border-radius:14px;
+padding:12px 14px;
 background:#2b3241;
 color:#fff;
-font-size:15px;
+font-size:14px;
+font-family:inherit;
 }
 
-.send,.join{
-border:0;
-border-radius:12px;
-background:#3478f6;
-color:#fff;
-font-weight:bold;
-cursor:pointer;
+.input::placeholder{
+color:#858ea0;
 }
 
 .send{
-padding:0 20px;
+width:50px;
+border:0;
+border-radius:14px;
+background:#3478f6;
+color:#fff;
+font-size:18px;
+cursor:pointer;
 }
+
+.send:active{
+transform:scale(.96);
+}
+
+/* =========================
+LOGIN
+========================= */
 
 .login{
 position:fixed;
 inset:0;
 z-index:100;
-background:#10131a;
+background:
+radial-gradient(circle at top,#1c3e78 0,#10131a 42%);
 display:flex;
 align-items:center;
 justify-content:center;
@@ -136,62 +252,211 @@ padding:20px;
 
 .login-box{
 width:100%;
-max-width:400px;
+max-width:390px;
 background:#202633;
-padding:25px;
-border-radius:20px;
+padding:28px 22px;
+border-radius:24px;
 text-align:center;
+box-shadow:0 15px 50px rgba(0,0,0,.45);
+}
+
+.logo{
+width:70px;
+height:70px;
+border-radius:22px;
+background:#3478f6;
+margin:0 auto 15px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:32px;
 }
 
 .login-box h1{
-margin-top:0;
+margin:0 0 8px;
+font-size:22px;
 }
 
 .login-box p{
 color:#9ca5b5;
+font-size:13px;
+margin-bottom:20px;
 }
 
-.name-input{
+.name-input,
+.admin-input{
+width:100%;
+padding:14px;
+border:1px solid transparent;
+outline:0;
+border-radius:13px;
+background:#2b3241;
+color:#fff;
+font-size:15px;
+margin-bottom:10px;
+font-family:inherit;
+}
+
+.name-input:focus,
+.admin-input:focus{
+border-color:#3478f6;
+}
+
+.join,
+.admin-login-btn{
 width:100%;
 padding:14px;
 border:0;
-outline:0;
-border-radius:12px;
-background:#2b3241;
+border-radius:13px;
+background:#3478f6;
 color:#fff;
-font-size:16px;
-margin:15px 0;
+font-weight:bold;
+font-size:15px;
+cursor:pointer;
+font-family:inherit;
 }
 
-.join{
-width:100%;
-padding:14px;
-font-size:16px;
+.admin-entry{
+margin-top:14px;
+background:transparent;
+border:0;
+color:#8eaef0;
+font-size:12px;
+cursor:pointer;
 }
 
 .error{
 color:#ff6868;
-font-size:13px;
+font-size:12px;
+margin-top:10px;
+min-height:17px;
+}
+
+/* =========================
+ADMIN PANEL
+========================= */
+
+.admin-panel{
+position:fixed;
+inset:0;
+z-index:200;
+background:#10131a;
+display:none;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.admin-box{
+width:100%;
+max-width:400px;
+background:#202633;
+border-radius:22px;
+padding:25px;
+box-shadow:0 15px 50px rgba(0,0,0,.5);
+}
+
+.admin-box h2{
+margin-top:0;
+font-size:20px;
+}
+
+.admin-box p{
+color:#9ca5b5;
+font-size:12px;
+line-height:1.7;
+}
+
+.admin-close{
+width:100%;
+padding:13px;
+margin-top:10px;
+border:0;
+border-radius:12px;
+background:#343b4a;
+color:#fff;
+font-family:inherit;
+cursor:pointer;
+}
+
+.danger{
+width:100%;
+padding:14px;
+border:0;
+border-radius:12px;
+background:#d9363e;
+color:#fff;
+font-weight:bold;
+font-family:inherit;
+cursor:pointer;
 margin-top:10px;
 }
 
-@media(max-width:500px){
-.message{max-width:90%}
-.send{padding:0 15px}
+.admin-badge{
+background:#d9363e;
+color:white;
+padding:4px 8px;
+border-radius:8px;
+font-size:10px;
+margin-right:5px;
 }
+
+/* =========================
+ADMIN BUTTON
+========================= */
+
+.admin-header-btn{
+border:0;
+background:#303848;
+color:#fff;
+width:38px;
+height:38px;
+border-radius:11px;
+cursor:pointer;
+font-size:17px;
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media(max-width:500px){
+
+.app{
+max-width:none;
+}
+
+.messages{
+padding-left:9px;
+padding-right:9px;
+}
+
+.message{
+max-width:88%;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- صفحه ورود -->
+<!-- =========================
+LOGIN
+========================= -->
+
 <div class="login" id="login">
 
 <div class="login-box">
 
-<h1>💬 چت آنلاین</h1>
+<div class="logo">💬</div>
 
-<p>برای ورود یک اسم انتخاب کن</p>
+<h1>چت آنلاین</h1>
+
+<p>
+برای ورود به چت یک نام انتخاب کن
+</p>
 
 <input
 id="nameInput"
@@ -209,31 +474,130 @@ type="button">
 ورود به چت 🚀
 </button>
 
+<button
+id="adminEntry"
+class="admin-entry"
+type="button">
+🔐 ورود مدیر
+</button>
+
 <div id="loginError" class="error"></div>
 
 </div>
 
 </div>
 
-<!-- خود چت -->
+<!-- =========================
+ADMIN LOGIN
+========================= -->
+
+<div class="login" id="adminLogin" style="display:none">
+
+<div class="login-box">
+
+<div class="logo">🔐</div>
+
+<h1>ورود مدیر</h1>
+
+<p>
+فقط مدیر سایت می‌تواند وارد این بخش شود.
+</p>
+
+<input
+id="adminUsername"
+class="admin-input"
+type="text"
+placeholder="نام کاربری"
+autocomplete="off"
+>
+
+<input
+id="adminPassword"
+class="admin-input"
+type="password"
+placeholder="رمز عبور"
+autocomplete="off"
+>
+
+<button
+id="adminLoginBtn"
+class="admin-login-btn"
+type="button">
+ورود به پنل 🔑
+</button>
+
+<button
+id="backToUserLogin"
+class="admin-entry"
+type="button">
+← بازگشت
+</button>
+
+<div id="adminLoginError" class="error"></div>
+
+</div>
+
+</div>
+
+<!-- =========================
+CHAT
+========================= -->
+
 <div class="app">
 
 <div class="header">
-<div class="title">💬 چت آنلاین</div>
-<div id="status" class="status">در حال اتصال...</div>
+
+<div class="header-right">
+
+<div class="chat-icon">
+💬
 </div>
 
-<div id="messages" class="messages">
+<div class="title-box">
 
-<div id="empty" class="empty">
+<div class="title">
+چت آنلاین
+</div>
+
+<div
+id="status"
+class="status">
+در حال اتصال...
+</div>
+
+</div>
+
+</div>
+
+<button
+id="adminBtn"
+class="admin-header-btn"
+style="display:none"
+title="پنل مدیریت">
+⚙️
+</button>
+
+</div>
+
+<div
+id="messages"
+class="messages">
+
+<div
+id="empty"
+class="empty">
+
 هنوز پیامی ارسال نشده 👋
+
 </div>
 
 </div>
 
 <div class="input-area">
 
-<form id="messageForm" class="form">
+<form
+id="messageForm"
+class="form">
 
 <input
 id="messageInput"
@@ -244,8 +608,12 @@ placeholder="پیامت رو بنویس..."
 autocomplete="off"
 >
 
-<button class="send" type="submit">
-ارسال
+<button
+class="send"
+type="submit">
+
+➤
+
 </button>
 
 </form>
@@ -254,11 +622,52 @@ autocomplete="off"
 
 </div>
 
+<!-- =========================
+ADMIN PANEL
+========================= -->
+
+<div
+id="adminPanel"
+class="admin-panel">
+
+<div class="admin-box">
+
+<h2>
+⚙️ پنل مدیریت
+<span class="admin-badge">ADMIN</span>
+</h2>
+
+<p>
+از این قسمت می‌توانی پیام‌های کاربران را مدیریت کنی.
+</p>
+
+<button
+id="deleteAllBtn"
+class="danger"
+type="button">
+
+🗑️ پاک کردن کل چت
+
+</button>
+
+<button
+id="adminClose"
+class="admin-close"
+type="button">
+
+بستن
+
+</button>
+
+</div>
+
+</div>
+
 <script>
 
-/* =========================
+/* =====================================================
 SUPABASE
-========================= */
+===================================================== */
 
 const SUPABASE_URL =
 "https://phhdtmgubuwqoagjemjt.supabase.co";
@@ -266,31 +675,92 @@ const SUPABASE_URL =
 const SUPABASE_PUBLISHABLE_KEY =
 "sb_publishable_tSAcYUIqP0OOE4vKscbKwA_MW8ExoLg";
 
-const db = window.supabase.createClient(
+const db =
+window.supabase.createClient(
 SUPABASE_URL,
 SUPABASE_PUBLISHABLE_KEY
 );
 
-/* =========================
-عناصر صفحه
-========================= */
+/* =====================================================
+ADMIN
+===================================================== */
 
-const login = document.getElementById("login");
-const nameInput = document.getElementById("nameInput");
-const joinBtn = document.getElementById("joinBtn");
-const loginError = document.getElementById("loginError");
+const ADMIN_USERNAME = "logic";
+const ADMIN_PASSWORD = "Alikardan";
 
-const messagesBox = document.getElementById("messages");
-const messageForm = document.getElementById("messageForm");
-const messageInput = document.getElementById("messageInput");
-const status = document.getElementById("status");
+let isAdmin = false;
+
+/* =====================================================
+ELEMENTS
+===================================================== */
+
+const login =
+document.getElementById("login");
+
+const adminLogin =
+document.getElementById("adminLogin");
+
+const nameInput =
+document.getElementById("nameInput");
+
+const joinBtn =
+document.getElementById("joinBtn");
+
+const loginError =
+document.getElementById("loginError");
+
+const adminEntry =
+document.getElementById("adminEntry");
+
+const adminUsername =
+document.getElementById("adminUsername");
+
+const adminPassword =
+document.getElementById("adminPassword");
+
+const adminLoginBtn =
+document.getElementById("adminLoginBtn");
+
+const adminLoginError =
+document.getElementById("adminLoginError");
+
+const backToUserLogin =
+document.getElementById("backToUserLogin");
+
+const adminBtn =
+document.getElementById("adminBtn");
+
+const adminPanel =
+document.getElementById("adminPanel");
+
+const adminClose =
+document.getElementById("adminClose");
+
+const deleteAllBtn =
+document.getElementById("deleteAllBtn");
+
+const messagesBox =
+document.getElementById("messages");
+
+const messageForm =
+document.getElementById("messageForm");
+
+const messageInput =
+document.getElementById("messageInput");
+
+const status =
+document.getElementById("status");
+
+/* =====================================================
+USERNAME
+===================================================== */
 
 let username =
 localStorage.getItem("chat_username");
 
-/* =========================
-ورود به چت
-========================= */
+/* =====================================================
+USER LOGIN
+===================================================== */
 
 function joinChat(){
 
@@ -315,15 +785,22 @@ username
 login.style.display = "none";
 
 messageInput.focus();
+
 }
 
-/* دکمه ورود */
+/* =====================================================
+USER LOGIN BUTTON
+===================================================== */
 
-joinBtn.onclick = joinChat;
+joinBtn.onclick =
+joinChat;
 
-/* کلید Enter */
+/* =====================================================
+ENTER USER
+===================================================== */
 
-nameInput.onkeydown = function(event){
+nameInput.onkeydown =
+function(event){
 
 if(event.key === "Enter"){
 joinChat();
@@ -331,17 +808,91 @@ joinChat();
 
 };
 
-/* اگر قبلاً اسم ذخیره شده */
+/* =====================================================
+ADMIN LOGIN PAGE
+===================================================== */
 
-if(username){
+adminEntry.onclick =
+function(){
 
 login.style.display = "none";
 
+adminLogin.style.display = "flex";
+
+adminUsername.focus();
+
+};
+
+/* =====================================================
+BACK
+===================================================== */
+
+backToUserLogin.onclick =
+function(){
+
+adminLogin.style.display = "none";
+
+login.style.display = "flex";
+
+};
+
+/* =====================================================
+ADMIN LOGIN
+===================================================== */
+
+function loginAsAdmin(){
+
+const user =
+adminUsername.value.trim();
+
+const pass =
+adminPassword.value;
+
+if(
+user === ADMIN_USERNAME &&
+pass === ADMIN_PASSWORD
+){
+
+isAdmin = true;
+
+adminLogin.style.display = "none";
+
+login.style.display = "none";
+
+adminBtn.style.display = "block";
+
+messageInput.focus();
+
+renderAdminButtons();
+
+}else{
+
+adminLoginError.textContent =
+"نام کاربری یا رمز عبور اشتباه است.";
+
 }
 
-/* =========================
-ساعت
-========================= */
+}
+
+adminLoginBtn.onclick =
+loginAsAdmin;
+
+/* =====================================================
+ENTER ADMIN
+===================================================== */
+
+adminPassword.onkeydown =
+function(event){
+
+if(event.key === "Enter"){
+loginAsAdmin();
+}
+
+};
+
+/* =====================================================
+TIME
+===================================================== */
 
 function formatTime(date){
 
@@ -353,9 +904,9 @@ minute:"2-digit"
 
 }
 
-/* =========================
-نمایش پیام
-========================= */
+/* =====================================================
+ADD MESSAGE
+===================================================== */
 
 function addMessage(message){
 
@@ -388,6 +939,20 @@ box.className = "message";
 box.dataset.messageId =
 message.id;
 
+if(
+username &&
+message.username === username &&
+!isAdmin
+){
+
+box.classList.add("mine");
+
+}else{
+
+box.classList.add("other");
+
+}
+
 const user =
 document.createElement("div");
 
@@ -413,8 +978,44 @@ time.textContent =
 formatTime(message.created_at);
 
 box.appendChild(user);
+
 box.appendChild(text);
+
 box.appendChild(time);
+
+/* =========================
+DELETE BUTTON FOR ADMIN
+========================= */
+
+if(isAdmin){
+
+const actions =
+document.createElement("div");
+
+actions.className =
+"message-actions";
+
+const deleteBtn =
+document.createElement("button");
+
+deleteBtn.className =
+"delete-message";
+
+deleteBtn.textContent =
+"🗑️ حذف پیام";
+
+deleteBtn.onclick =
+function(){
+
+deleteMessage(message.id);
+
+};
+
+actions.appendChild(deleteBtn);
+
+box.appendChild(actions);
+
+}
 
 messagesBox.appendChild(box);
 
@@ -423,9 +1024,211 @@ messagesBox.scrollHeight;
 
 }
 
-/* =========================
-دریافت پیام‌های قبلی
-========================= */
+/* =====================================================
+ADMIN BUTTONS
+===================================================== */
+
+function renderAdminButtons(){
+
+document
+.querySelectorAll(".message-actions")
+.forEach(el => el.remove());
+
+document
+.querySelectorAll(".message")
+.forEach(box => {
+
+const id =
+box.dataset.messageId;
+
+const actions =
+document.createElement("div");
+
+actions.className =
+"message-actions";
+
+const btn =
+document.createElement("button");
+
+btn.className =
+"delete-message";
+
+btn.textContent =
+"🗑️ حذف پیام";
+
+btn.onclick =
+function(){
+
+deleteMessage(id);
+
+};
+
+actions.appendChild(btn);
+
+box.appendChild(actions);
+
+});
+
+}
+
+/* =====================================================
+DELETE ONE MESSAGE
+===================================================== */
+
+async function deleteMessage(id){
+
+if(!isAdmin){
+return;
+}
+
+const confirmDelete =
+confirm(
+"آیا از حذف این پیام مطمئنی؟"
+);
+
+if(!confirmDelete){
+return;
+}
+
+const result =
+await db
+.from("messages")
+.delete()
+.eq("id",id);
+
+if(result.error){
+
+console.error(result.error);
+
+alert(
+"❌ حذف پیام انجام نشد."
+);
+
+return;
+}
+
+const element =
+document.querySelector(
+'[data-message-id="' +
+id +
+'"]'
+);
+
+if(element){
+element.remove();
+}
+
+checkEmpty();
+
+}
+
+/* =====================================================
+DELETE ALL
+===================================================== */
+
+deleteAllBtn.onclick =
+async function(){
+
+if(!isAdmin){
+return;
+}
+
+const confirmDelete =
+confirm(
+"⚠️ هشدار\n\n" +
+"تمام پیام‌های چت حذف می‌شوند.\n\n" +
+"آیا مطمئنی؟"
+);
+
+if(!confirmDelete){
+return;
+}
+
+const result =
+await db
+.from("messages")
+.delete()
+.not("id","is",null);
+
+if(result.error){
+
+console.error(result.error);
+
+alert(
+"❌ پاک کردن چت انجام نشد.\n" +
+result.error.message
+);
+
+return;
+}
+
+messagesBox.innerHTML = `
+
+<div id="empty" class="empty">
+چت پاک شد 🧹
+</div>
+
+`;
+
+adminPanel.style.display =
+"none";
+
+};
+
+/* =====================================================
+EMPTY CHECK
+===================================================== */
+
+function checkEmpty(){
+
+const messages =
+document.querySelectorAll(
+".message"
+);
+
+if(messages.length === 0){
+
+if(
+!document.getElementById("empty")
+){
+
+messagesBox.innerHTML = `
+
+<div id="empty" class="empty">
+هنوز پیامی ارسال نشده 👋
+</div>
+
+`;
+
+}
+
+}
+
+}
+
+/* =====================================================
+ADMIN PANEL
+===================================================== */
+
+adminBtn.onclick =
+function(){
+
+adminPanel.style.display =
+"flex";
+
+};
+
+adminClose.onclick =
+function(){
+
+adminPanel.style.display =
+"none";
+
+};
+
+/* =====================================================
+LOAD MESSAGES
+===================================================== */
 
 async function loadMessages(){
 
@@ -451,16 +1254,18 @@ status.textContent =
 return;
 }
 
-result.data.forEach(addMessage);
+result.data.forEach(
+addMessage
+);
 
 status.textContent =
 "🟢 آنلاین";
 
 }
 
-/* =========================
-ارسال پیام
-========================= */
+/* =====================================================
+SEND MESSAGE
+===================================================== */
 
 messageForm.onsubmit =
 async function(event){
@@ -474,22 +1279,31 @@ if(!text){
 return;
 }
 
-if(!username){
+if(!username && !isAdmin){
 
 login.style.display =
 "flex";
 
 return;
+
 }
 
 messageInput.disabled = true;
+
+const senderName =
+isAdmin
+? "مدیر"
+: username;
 
 const result =
 await db
 .from("messages")
 .insert({
-username:username,
+
+username:senderName,
+
 message:text
+
 });
 
 if(result.error){
@@ -497,7 +1311,7 @@ if(result.error){
 console.error(result.error);
 
 alert(
-"❌ پیام ارسال نشد"
+"❌ پیام ارسال نشد."
 );
 
 }else{
@@ -512,12 +1326,13 @@ messageInput.focus();
 
 };
 
-/* =========================
-پیام‌های لحظه‌ای
-========================= */
+/* =====================================================
+REALTIME
+===================================================== */
 
 db
 .channel("chat-room")
+
 .on(
 "postgres_changes",
 {
@@ -531,7 +1346,37 @@ addMessage(payload.new);
 
 }
 )
-.subscribe(function(state){
+
+.on(
+"postgres_changes",
+{
+event:"DELETE",
+schema:"public",
+table:"messages"
+},
+function(payload){
+
+const id =
+payload.old.id;
+
+const element =
+document.querySelector(
+'[data-message-id="' +
+id +
+'"]'
+);
+
+if(element){
+element.remove();
+}
+
+checkEmpty();
+
+}
+)
+
+.subscribe(
+function(state){
 
 if(state === "SUBSCRIBED"){
 
@@ -540,11 +1385,19 @@ status.textContent =
 
 }
 
-});
+}
+);
 
-/* =========================
-شروع
-========================= */
+/* =====================================================
+START
+===================================================== */
+
+if(username){
+
+login.style.display =
+"none";
+
+}
 
 loadMessages();
 
