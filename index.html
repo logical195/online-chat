@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>چت آنلاین</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Tahoma,Arial,sans-serif;
+background:#0f1117;
+color:white;
+height:100vh;
+overflow:hidden;
+}
+
+.app{
+width:100%;
+max-width:700px;
+height:100vh;
+margin:auto;
+display:flex;
+flex-direction:column;
+background:#171a22;
+}
+
+.header{
+height:65px;
+padding:15px;
+background:#20242f;
+border-bottom:1px solid #303541;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.title{
+font-size:20px;
+font-weight:bold;
+}
+
+.status{
+font-size:12px;
+color:#62e58a;
+}
+
+.messages{
+flex:1;
+overflow-y:auto;
+padding:15px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.message{
+background:#252a36;
+border-radius:15px;
+padding:10px 13px;
+max-width:85%;
+align-self:flex-start;
+}
+
+.username{
+font-size:13px;
+font-weight:bold;
+color:#62a0ff;
+margin-bottom:5px;
+}
+
+.text{
+font-size:15px;
+line-height:1.6;
+white-space:pre-wrap;
+word-break:break-word;
+}
+
+.time{
+font-size:10px;
+color:#858d9e;
+margin-top:5px;
+}
+
+.empty{
+margin:auto;
+color:#858d9e;
+text-align:center;
+}
+
+.input-area{
+padding:12px;
+background:#20242f;
+border-top:1px solid #303541;
+}
+
+.form{
+display:flex;
+gap:8px;
+}
+
+.input{
+flex:1;
+border:0;
+outline:0;
+border-radius:13px;
+padding:13px;
+background:#2b303d;
+color:white;
+font-size:15px;
+}
+
+.input::placeholder{
+color:#8991a1;
+}
+
+.send{
+border:0;
+border-radius:13px;
+padding:0 20px;
+background:#3478f6;
+color:white;
+font-weight:bold;
+font-size:14px;
+}
+
+.login{
+position:fixed;
+inset:0;
+z-index:10;
+background:#0f1117;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.login-box{
+width:100%;
+max-width:400px;
+background:#20242f;
+padding:25px;
+border-radius:20px;
+text-align:center;
+}
+
+.login-box h1{
+margin-top:0;
+}
+
+.login-box p{
+color:#929aaa;
+font-size:14px;
+}
+
+.name-input{
+width:100%;
+padding:14px;
+border:0;
+outline:0;
+border-radius:12px;
+background:#2b303d;
+color:white;
+font-size:16px;
+margin:15px 0;
+}
+
+.join{
+width:100%;
+padding:14px;
+border:0;
+border-radius:12px;
+background:#3478f6;
+color:white;
+font-size:16px;
+font-weight:bold;
+}
+
+.error{
+color:#ff6868;
+font-size:13px;
+margin-top:10px;
+min-height:18px;
+}
+
+@media(max-width:500px){
+.title{font-size:18px}
+.messages{padding:10px}
+.message{max-width:90%}
+.send{padding:0 15px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="login" id="login">
+<div class="login-box">
+
+<h1>💬 چت آنلاین</h1>
+
+<p>برای ورود یک اسم انتخاب کن</p>
+
+<input
+id="nameInput"
+class="name-input"
+maxlength="30"
+placeholder="مثلاً پاتریک"
+autocomplete="off"
+>
+
+<button class="join" id="joinBtn">
+ورود به چت 🚀
+</button>
+
+<div class="error" id="loginError"></div>
+
+</div>
+</div>
+
+<div class="app">
+
+<div class="header">
+<div class="title">💬 چت آنلاین</div>
+<div class="status" id="status">در حال اتصال...</div>
+</div>
+
+<div class="messages" id="messages">
+<div class="empty" id="empty">
+هنوز پیامی ارسال نشده 👋
+</div>
+</div>
+
+<div class="input-area">
+
+<form class="form" id="messageForm">
+
+<input
+id="messageInput"
+class="input"
+maxlength="500"
+placeholder="پیامت رو بنویس..."
+autocomplete="off"
+>
+
+<button class="send" type="submit">
+ارسال
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+
+/* ================================
+اتصال به Supabase
+================================ */
+
+const SUPABASE_URL =
+"https://phhdtmgubuwqoagjemjt.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_tSAcYUIqP0OOE4vKscbKwA_MW8ExoLg";
+
+const supabase = window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_PUBLISHABLE_KEY
+);
+
+/* ================================
+عناصر صفحه
+================================ */
+
+const login = document.getElementById("login");
+const nameInput = document.getElementById("nameInput");
+const joinBtn = document.getElementById("joinBtn");
+const loginError = document.getElementById("loginError");
+
+const messagesBox = document.getElementById("messages");
+const messageForm = document.getElementById("messageForm");
+const messageInput = document.getElementById("messageInput");
+const status = document.getElementById("status");
+
+let empty = document.getElementById("empty");
+
+let username = localStorage.getItem("chat_username");
+
+/* ================================
+ورود
+================================ */
+
+if(username){
+login.style.display = "none";
+}
+
+joinBtn.addEventListener("click", joinChat);
+
+nameInput.addEventListener("keydown", function(e){
+
+if(e.key === "Enter"){
+joinChat();
+}
+
+});
+
+function joinChat(){
+
+const name = nameInput.value.trim();
+
+if(!name){
+
+loginError.textContent =
+"لطفاً یک اسم وارد کن";
+
+return;
+}
+
+if(name.length < 2){
+
+loginError.textContent =
+"اسم باید حداقل ۲ حرف باشد";
+
+return;
+}
+
+username = name;
+
+localStorage.setItem(
+"chat_username",
+username
+);
+
+login.style.display = "none";
+
+messageInput.focus();
+
+}
+
+/* ================================
+ساعت پیام
+================================ */
+
+function formatTime(date){
+
+return new Date(date).toLocaleTimeString(
+"fa-IR",
+{
+hour:"2-digit",
+minute:"2-digit"
+}
+);
+
+}
+
+/* ================================
+نمایش پیام
+================================ */
+
+function addMessage(message){
+
+if(!message || !message.id){
+return;
+}
+
+if(
+document.querySelector(
+[data-id="${message.id}"]
+)
+){
+return;
+}
+
+if(empty){
+
+empty.remove();
+empty = null;
+
+}
+
+const box =
+document.createElement("div");
+
+box.className = "message";
+
+box.dataset.id = message.id;
+
+const user =
+document.createElement("div");
+
+user.className = "username";
+
+user.textContent =
+message.username;
+
+const text =
+document.createElement("div");
+
+text.className = "text";
+
+text.textContent =
+message.message;
+
+const time =
+document.createElement("div");
+
+time.className = "time";
+
+time.textContent =
+formatTime(message.created_at);
+
+box.appendChild(user);
+box.appendChild(text);
+box.appendChild(time);
+
+messagesBox.appendChild(box);
+
+messagesBox.scrollTop =
+messagesBox.scrollHeight;
+
+}
+
+/* ================================
+گرفتن پیام‌های قبلی
+================================ */
+
+async function loadMessages(){
+
+status.textContent =
+"در حال دریافت پیام‌ها...";
+
+const {data,error} =
+await supabase
+
+.from("messages")
+
+.select(
+"id,username,message,created_at"
+)
+
+.order(
+"created_at",
+{
+ascending:true
+}
+)
+
+.limit(100);
+
+if(error){
+
+console.error(error);
+
+status.textContent =
+"🔴 خطا در اتصال";
+
+return;
+}
+
+data.forEach(addMessage);
+
+status.textContent =
+"🟢 آنلاین";
+
+}
+
+/* ================================
+ارسال پیام
+================================ */
+
+messageForm.addEventListener(
+"submit",
+async function(e){
+
+e.preventDefault();
+
+const text =
+messageInput.value.trim();
+
+if(!text){
+return;
+}
+
+if(!username){
+
+login.style.display =
+"flex";
+
+return;
+}
+
+messageInput.disabled = true;
+
+const {error} =
+await supabase
+
+.from("messages")
+
+.insert({
+username:username,
+message:text
+});
+
+if(error){
+
+console.error(error);
+
+alert(
+"❌ پیام ارسال نشد"
+);
+
+}else{
+
+messageInput.value = "";
+
+}
+
+messageInput.disabled = false;
+
+messageInput.focus();
+
+}
+);
+
+/* ================================
+پیام‌های لحظه‌ای
+================================ */
+
+supabase
+
+.channel("messages-room")
+
+.on(
+"postgres_changes",
+{
+event:"INSERT",
+schema:"public",
+table:"messages"
+},
+function(payload){
+
+addMessage(payload.new);
+
+}
+)
+
+.subscribe(function(state){
+
+if(state === "SUBSCRIBED"){
+
+status.textContent =
+"🟢 آنلاین";
+
+}
+
+if(state === "CHANNEL_ERROR"){
+
+status.textContent =
+"🔴 خطای اتصال";
+
+}
+
+});
+
+/* ================================
+شروع
+================================ */
+
+loadMessages();
+
+</script>
+
+</body>
+</html>
