@@ -8,247 +8,496 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:Tahoma,Arial,sans-serif;
-background:#10131a;
-color:#fff;
-height:100vh;
-overflow:hidden;
+* {
+box-sizing: border-box;
 }
 
-.app{
-width:100%;
-max-width:700px;
-height:100vh;
-margin:auto;
-display:flex;
-flex-direction:column;
-background:#171b24;
+body {
+margin: 0;
+font-family: Tahoma, Arial, sans-serif;
+background: linear-gradient(135deg, #111827, #1e3a8a);
+color: white;
+min-height: 100vh;
 }
 
-.header{
-padding:16px;
-background:#202633;
-border-bottom:1px solid #303746;
-display:flex;
-justify-content:space-between;
-align-items:center;
+button,
+input {
+font-family: inherit;
 }
 
-.title{
-font-size:20px;
-font-weight:bold;
+.screen {
+min-height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 20px;
 }
 
-.status{
-font-size:12px;
-color:#69e58a;
+.hidden {
+display: none !important;
 }
 
-.messages{
-flex:1;
-overflow-y:auto;
-padding:15px;
-display:flex;
-flex-direction:column;
-gap:10px;
+.box {
+width: 100%;
+max-width: 420px;
+background: rgba(17, 24, 39, 0.95);
+border-radius: 24px;
+padding: 28px;
+box-shadow: 0 20px 50px rgba(0,0,0,0.4);
 }
 
-.message{
-background:#252c3a;
-border-radius:14px;
-padding:10px 13px;
-max-width:85%;
+h1,
+h2 {
+text-align: center;
+margin-top: 0;
 }
 
-.username{
-color:#66aaff;
-font-size:13px;
-font-weight:bold;
-margin-bottom:5px;
+.subtitle {
+text-align: center;
+color: #cbd5e1;
+margin-bottom: 25px;
 }
 
-.text{
-font-size:15px;
-line-height:1.6;
-word-break:break-word;
+input {
+width: 100%;
+padding: 15px;
+margin: 8px 0;
+border: 1px solid #475569;
+border-radius: 14px;
+background: #0f172a;
+color: white;
+font-size: 16px;
+outline: none;
 }
 
-.time{
-color:#8992a3;
-font-size:10px;
-margin-top:5px;
+input:focus {
+border-color: #60a5fa;
 }
 
-.empty{
-margin:auto;
-color:#8992a3;
+button {
+width: 100%;
+border: 0;
+padding: 15px;
+margin-top: 10px;
+border-radius: 14px;
+background: #2563eb;
+color: white;
+font-size: 16px;
+font-weight: bold;
+cursor: pointer;
 }
 
-.input-area{
-padding:12px;
-background:#202633;
-border-top:1px solid #303746;
+button:hover {
+background: #1d4ed8;
 }
 
-.form{
-display:flex;
-gap:8px;
+.secondary {
+background: #334155;
 }
 
-.input{
-flex:1;
-border:0;
-outline:0;
-border-radius:12px;
-padding:13px;
-background:#2b3241;
-color:#fff;
-font-size:15px;
+.secondary:hover {
+background: #475569;
 }
 
-.send,.join{
-border:0;
-border-radius:12px;
-background:#3478f6;
-color:#fff;
-font-weight:bold;
-cursor:pointer;
+.danger {
+background: #dc2626;
 }
 
-.send{
-padding:0 20px;
+.danger:hover {
+background: #b91c1c;
 }
 
-.login{
-position:fixed;
-inset:0;
-z-index:100;
-background:#10131a;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:20px;
+.success {
+background: #16a34a;
 }
 
-.login-box{
-width:100%;
-max-width:400px;
-background:#202633;
-padding:25px;
-border-radius:20px;
-text-align:center;
+.message {
+text-align: center;
+margin-top: 15px;
+min-height: 24px;
+color: #fbbf24;
 }
 
-.login-box h1{
-margin-top:0;
+/* CHAT */
+
+#chatScreen {
+display: none;
+min-height: 100vh;
+flex-direction: column;
 }
 
-.login-box p{
-color:#9ca5b5;
+.chat-header {
+background: rgba(15, 23, 42, 0.98);
+padding: 15px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 10px;
+position: sticky;
+top: 0;
+z-index: 10;
 }
 
-.name-input{
-width:100%;
-padding:14px;
-border:0;
-outline:0;
-border-radius:12px;
-background:#2b3241;
-color:#fff;
-font-size:16px;
-margin:15px 0;
+.chat-title {
+font-size: 18px;
+font-weight: bold;
 }
 
-.join{
-width:100%;
-padding:14px;
-font-size:16px;
+.username-label {
+font-size: 13px;
+color: #94a3b8;
+margin-top: 4px;
 }
 
-.error{
-color:#ff6868;
-font-size:13px;
-margin-top:10px;
+.logout-btn {
+width: auto;
+margin: 0;
+padding: 9px 14px;
+font-size: 13px;
+background: #475569;
 }
 
-@media(max-width:500px){
-.message{max-width:90%}
-.send{padding:0 15px}
+#messages {
+flex: 1;
+width: 100%;
+max-width: 800px;
+margin: auto;
+padding: 20px 15px 100px;
+overflow-y: auto;
+}
+
+.message-item {
+background: rgba(30, 41, 59, 0.9);
+border-radius: 16px;
+padding: 12px 15px;
+margin-bottom: 10px;
+word-wrap: break-word;
+}
+
+.message-user {
+color: #60a5fa;
+font-weight: bold;
+margin-bottom: 5px;
+}
+
+.message-text {
+color: #f8fafc;
+line-height: 1.7;
+}
+
+.message-time {
+color: #64748b;
+font-size: 11px;
+margin-top: 5px;
+}
+
+.send-area {
+position: fixed;
+bottom: 0;
+left: 0;
+right: 0;
+background: rgba(15, 23, 42, 0.98);
+padding: 10px;
+z-index: 20;
+}
+
+.send-box {
+max-width: 800px;
+margin: auto;
+display: flex;
+gap: 8px;
+}
+
+.send-box input {
+margin: 0;
+flex: 1;
+}
+
+.send-box button {
+width: auto;
+margin: 0;
+padding: 0 20px;
+}
+
+/* ADMIN */
+
+#adminScreen {
+display: none;
+min-height: 100vh;
+padding: 20px;
+}
+
+.admin-container {
+width: 100%;
+max-width: 900px;
+margin: auto;
+}
+
+.admin-header {
+background: rgba(15,23,42,0.95);
+padding: 20px;
+border-radius: 20px;
+margin-bottom: 15px;
+}
+
+.admin-actions {
+display: flex;
+gap: 10px;
+flex-wrap: wrap;
+}
+
+.admin-actions button {
+flex: 1;
+min-width: 150px;
+}
+
+.admin-message {
+background: rgba(15,23,42,0.95);
+border-radius: 16px;
+padding: 15px;
+margin-bottom: 10px;
+}
+
+.admin-message-top {
+display: flex;
+justify-content: space-between;
+gap: 10px;
+align-items: center;
+margin-bottom: 8px;
+}
+
+.admin-message-user {
+color: #60a5fa;
+font-weight: bold;
+}
+
+.delete-one {
+width: auto;
+margin: 0;
+padding: 7px 12px;
+font-size: 12px;
+}
+
+.empty {
+text-align: center;
+color: #94a3b8;
+padding: 40px;
+}
+
+@media (max-width: 600px) {
+.box {
+padding: 22px;
+}
+
+.chat-header {
+padding: 12px;
+}
+
+.chat-title {
+font-size: 16px;
+}
+
+.send-box button {
+padding: 0 15px;
+}
 }
 </style>
 </head>
 
 <body>
 
-<!-- صفحه ورود -->
-<div class="login" id="login">
-
-<div class="login-box">
-
+<!-- صفحه اصلی -->
+<div id="homeScreen" class="screen">
+<div class="box">
 <h1>💬 چت آنلاین</h1>
+<div class="subtitle">
+به چت آنلاین خوش آمدید
+</div>
 
-<p>برای ورود یک اسم انتخاب کن</p>
-
-<input
-id="nameInput"
-class="name-input"
-type="text"
-maxlength="30"
-placeholder="مثلاً پاتریک"
-autocomplete="off"
->
-
-<button
-id="joinBtn"
-class="join"
-type="button">
-ورود به چت 🚀
+<button onclick="showRegister()">
+📝 ساخت حساب
 </button>
 
-<div id="loginError" class="error"></div>
+<button onclick="showLogin()">
+🔐 ورود به حساب
+</button>
 
+<button class="secondary" onclick="showAdminLogin()">
+👑 ورود ادمین
+</button>
+
+<div id="homeMessage" class="message"></div>
+</div>
 </div>
 
+<!-- ساخت حساب -->
+<div id="registerScreen" class="screen hidden">
+<div class="box">
+<h2>📝 ساخت حساب</h2>
+
+<input
+id="registerUsername"
+type="text"
+placeholder="نام کاربری"
+maxlength="30"
+autocomplete="username"
+>
+
+<input
+id="registerPassword"
+type="password"
+placeholder="رمز عبور"
+autocomplete="new-password"
+>
+
+<button onclick="registerUser()">
+ساخت حساب
+</button>
+
+<button class="secondary" onclick="showHome()">
+بازگشت
+</button>
+
+<div id="registerMessage" class="message"></div>
+</div>
 </div>
 
-<!-- خود چت -->
-<div class="app">
+<!-- ورود حساب -->
+<div id="loginScreen" class="screen hidden">
+<div class="box">
+<h2>🔐 ورود به حساب</h2>
 
-<div class="header">
-<div class="title">💬 چت آنلاین</div>
-<div id="status" class="status">در حال اتصال...</div>
+<input
+id="loginUsername"
+type="text"
+placeholder="نام کاربری"
+autocomplete="username"
+>
+
+<input
+id="loginPassword"
+type="password"
+placeholder="رمز عبور"
+autocomplete="current-password"
+>
+
+<button onclick="loginUser()">
+ورود
+</button>
+
+<button class="secondary" onclick="showHome()">
+بازگشت
+</button>
+
+<div id="loginMessage" class="message"></div>
+</div>
 </div>
 
-<div id="messages" class="messages">
+<!-- ورود ادمین -->
+<div id="adminLoginScreen" class="screen hidden">
+<div class="box">
+<h2>👑 ورود ادمین</h2>
 
-<div id="empty" class="empty">
-هنوز پیامی ارسال نشده 👋
+<input
+id="adminUsername"
+type="text"
+placeholder="نام کاربری ادمین"
+autocomplete="username"
+>
+
+<input
+id="adminPassword"
+type="password"
+placeholder="رمز عبور ادمین"
+autocomplete="current-password"
+>
+
+<button onclick="adminLogin()">
+ورود به پنل
+</button>
+
+<button class="secondary" onclick="showHome()">
+بازگشت
+</button>
+
+<div id="adminLoginMessage" class="message"></div>
+</div>
 </div>
 
+<!-- صفحه چت -->
+<div id="chatScreen">
+
+<div class="chat-header">
+<div>
+<div class="chat-title">
+💬 چت آنلاین
 </div>
 
-<div class="input-area">
+<div id="currentUsername" class="username-label">
+...
+</div>
+</div>
 
-<form id="messageForm" class="form">
+<button class="logout-btn" onclick="logoutUser()">
+خروج
+</button>
+</div>
 
+<div id="messages"></div>
+
+<div class="send-area">
+<div class="send-box">
 <input
 id="messageInput"
-class="input"
 type="text"
-maxlength="500"
 placeholder="پیامت رو بنویس..."
+maxlength="1000"
 autocomplete="off"
 >
 
-<button class="send" type="submit">
+<button onclick="sendMessage()">
 ارسال
 </button>
+</div>
+</div>
 
-</form>
+</div>
+
+<!-- پنل ادمین -->
+<div id="adminScreen">
+
+<div class="admin-container">
+
+<div class="admin-header">
+<h2>👑 پنل مدیریت چت</h2>
+
+<div class="admin-actions">
+
+<button
+class="danger"
+onclick="deleteAllMessages()"
+>
+🗑️ حذف کل چت
+</button>
+
+<button
+class="secondary"
+onclick="loadAdminMessages()"
+>
+🔄 بروزرسانی
+</button>
+
+<button
+class="secondary"
+onclick="logoutAdmin()"
+>
+خروج
+</button>
+
+</div>
+</div>
+
+<div id="adminMessages"></div>
 
 </div>
 
@@ -256,9 +505,9 @@ autocomplete="off"
 
 <script>
 
-/* =========================
-SUPABASE
-========================= */
+/* ================================
+تنظیمات Supabase
+================================= */
 
 const SUPABASE_URL =
 "https://phhdtmgubuwqoagjemjt.supabase.co";
@@ -271,282 +520,967 @@ SUPABASE_URL,
 SUPABASE_PUBLISHABLE_KEY
 );
 
-/* =========================
-عناصر صفحه
-========================= */
+/* ================================
+متغیرها
+================================= */
 
-const login = document.getElementById("login");
-const nameInput = document.getElementById("nameInput");
-const joinBtn = document.getElementById("joinBtn");
-const loginError = document.getElementById("loginError");
+let currentUsername =
+localStorage.getItem("chat_username") || "";
 
-const messagesBox = document.getElementById("messages");
-const messageForm = document.getElementById("messageForm");
-const messageInput = document.getElementById("messageInput");
-const status = document.getElementById("status");
+let adminToken =
+sessionStorage.getItem("admin_token") || "";
 
-let username =
-localStorage.getItem("chat_username");
+let realtimeChannel = null;
 
-/* =========================
-ورود به چت
-========================= */
+/* ================================
+مدیریت صفحات
+================================= */
 
-function joinChat(){
+function hideAllScreens() {
 
-const name =
-nameInput.value.trim();
+document.getElementById("homeScreen")
+.classList.add("hidden");
 
-if(name.length < 2){
+document.getElementById("registerScreen")
+.classList.add("hidden");
 
-loginError.textContent =
-"لطفاً حداقل ۲ حرف وارد کن.";
+document.getElementById("loginScreen")
+.classList.add("hidden");
+
+document.getElementById("adminLoginScreen")
+.classList.add("hidden");
+
+document.getElementById("chatScreen")
+.style.display = "none";
+
+document.getElementById("adminScreen")
+.style.display = "none";
+}
+
+function showHome() {
+
+hideAllScreens();
+
+document.getElementById("homeScreen")
+.classList.remove("hidden");
+}
+
+function showRegister() {
+
+hideAllScreens();
+
+document.getElementById("registerScreen")
+.classList.remove("hidden");
+
+document.getElementById("registerMessage")
+.textContent = "";
+}
+
+function showLogin() {
+
+hideAllScreens();
+
+document.getElementById("loginScreen")
+.classList.remove("hidden");
+
+document.getElementById("loginMessage")
+.textContent = "";
+}
+
+function showAdminLogin() {
+
+hideAllScreens();
+
+document.getElementById("adminLoginScreen")
+.classList.remove("hidden");
+
+document.getElementById("adminLoginMessage")
+.textContent = "";
+}
+
+/* ================================
+ساخت حساب
+================================= */
+
+async function registerUser() {
+
+const username =
+document.getElementById("registerUsername")
+.value.trim();
+
+const password =
+document.getElementById("registerPassword")
+.value;
+
+const message =
+document.getElementById("registerMessage");
+
+message.textContent = "⏳ در حال ساخت حساب...";
+
+if (!username || !password) {
+
+message.textContent =
+"❌ نام کاربری و رمز عبور را وارد کن.";
 
 return;
 }
 
-username = name;
+try {
+
+const { data, error } =
+await db.rpc("register_chat_user", {
+p_username: username,
+p_password: password
+});
+
+if (error) {
+
+console.error(error);
+
+message.textContent =
+"❌ خطا در ارتباط با سرور: " +
+error.message;
+
+return;
+}
+
+if (!data || !data.success) {
+
+message.textContent =
+"❌ " +
+(data?.error || "ساخت حساب ناموفق بود.");
+
+return;
+}
+
+currentUsername = data.username;
 
 localStorage.setItem(
 "chat_username",
-username
+currentUsername
 );
 
-login.style.display = "none";
+message.textContent =
+"✅ حساب با موفقیت ساخته شد.";
 
-messageInput.focus();
+setTimeout(() => {
+
+openChat();
+
+}, 700);
+
+} catch (err) {
+
+console.error(err);
+
+message.textContent =
+"❌ یک خطای غیرمنتظره رخ داد.";
+}
 }
 
-/* دکمه ورود */
+/* ================================
+ورود کاربر
+================================= */
 
-joinBtn.onclick = joinChat;
+async function loginUser() {
 
-/* کلید Enter */
+const username =
+document.getElementById("loginUsername")
+.value.trim();
 
-nameInput.onkeydown = function(event){
+const password =
+document.getElementById("loginPassword")
+.value;
 
-if(event.key === "Enter"){
-joinChat();
+const message =
+document.getElementById("loginMessage");
+
+message.textContent = "⏳ در حال ورود...";
+
+if (!username || !password) {
+
+message.textContent =
+"❌ نام کاربری و رمز عبور را وارد کن.";
+
+return;
 }
 
-};
+try {
 
-/* اگر قبلاً اسم ذخیره شده */
-
-if(username){
-
-login.style.display = "none";
-
-}
-
-/* =========================
-ساعت
-========================= */
-
-function formatTime(date){
-
-return new Date(date)
-.toLocaleTimeString("fa-IR",{
-hour:"2-digit",
-minute:"2-digit"
+const { data, error } =
+await db.rpc("login_chat_user", {
+p_username: username,
+p_password: password
 });
 
+if (error) {
+
+console.error(error);
+
+message.textContent =
+"❌ خطا در ارتباط با سرور: " +
+error.message;
+
+return;
 }
 
-/* =========================
+if (!data || !data.success) {
+
+message.textContent =
+"❌ " +
+(data?.error || "نام کاربری یا رمز عبور اشتباه است.");
+
+return;
+}
+
+currentUsername = data.username;
+
+localStorage.setItem(
+"chat_username",
+currentUsername
+);
+
+openChat();
+
+} catch (err) {
+
+console.error(err);
+
+message.textContent =
+"❌ یک خطای غیرمنتظره رخ داد.";
+}
+}
+
+/* ================================
+ورود ادمین
+================================= */
+
+async function adminLogin() {
+
+const username =
+document.getElementById("adminUsername")
+.value.trim();
+
+const password =
+document.getElementById("adminPassword")
+.value;
+
+const message =
+document.getElementById("adminLoginMessage");
+
+message.textContent = "⏳ در حال بررسی...";
+
+if (!username || !password) {
+
+message.textContent =
+"❌ اطلاعات را کامل وارد کن.";
+
+return;
+}
+
+try {
+
+const { data, error } =
+await db.rpc("admin_login", {
+p_username: username,
+p_password: password
+});
+
+if (error) {
+
+console.error(error);
+
+message.textContent =
+"❌ خطا: " +
+error.message;
+
+return;
+}
+
+if (!data || !data.success) {
+
+message.textContent =
+"❌ " +
+(data?.error || "اطلاعات ادمین اشتباه است.");
+
+return;
+}
+
+adminToken = data.token;
+
+sessionStorage.setItem(
+"admin_token",
+adminToken
+);
+
+openAdminPanel();
+
+} catch (err) {
+
+console.error(err);
+
+message.textContent =
+"❌ خطای غیرمنتظره.";
+}
+}
+
+/* ================================
+باز کردن چت
+================================= */
+
+async function openChat() {
+
+hideAllScreens();
+
+document.getElementById("chatScreen")
+.style.display = "flex";
+
+document.getElementById("currentUsername")
+.textContent =
+"👤 " + currentUsername;
+
+await loadMessages();
+
+startRealtime();
+
+await cleanupOldMessages();
+}
+
+/* ================================
+دریافت پیام‌ها
+================================= */
+
+async function loadMessages() {
+
+const container =
+document.getElementById("messages");
+
+container.innerHTML =
+'<div class="empty">⏳ در حال دریافت پیام‌ها...</div>';
+
+const { data, error } =
+await db
+.from("messages")
+.select("id,username,message,created_at")
+.order("created_at", {
+ascending: true
+})
+.limit(20);
+
+if (error) {
+
+console.error(error);
+
+container.innerHTML =
+'<div class="empty">❌ دریافت پیام‌ها ناموفق بود.</div>';
+
+return;
+}
+
+container.innerHTML = "";
+
+if (!data || data.length === 0) {
+
+container.innerHTML =
+'<div class="empty">هنوز پیامی وجود ندارد 👋</div>';
+
+return;
+}
+
+data.forEach(addMessage);
+
+scrollMessagesToBottom();
+}
+
+/* ================================
 نمایش پیام
-========================= */
+================================= */
 
-function addMessage(message){
+function addMessage(msg) {
 
-if(!message || !message.id){
-return;
-}
+const container =
+document.getElementById("messages");
 
-if(
-document.querySelector(
-'[data-message-id="' +
-message.id +
-'"]'
+if (!container) return;
+
+if (
+container.querySelector(
+[data-message-id="${msg.id}"]`
 )
-){
+) {
 return;
 }
 
-const empty =
-document.getElementById("empty");
-
-if(empty){
-empty.remove();
-}
-
-const box =
+const item =
 document.createElement("div");
 
-box.className = "message";
+item.className = "message-item";
 
-box.dataset.messageId =
-message.id;
+item.dataset.messageId = msg.id;
 
 const user =
 document.createElement("div");
 
-user.className = "username";
+user.className = "message-user";
 
 user.textContent =
-message.username;
+"👤 " + msg.username;
 
 const text =
 document.createElement("div");
 
-text.className = "text";
+text.className = "message-text";
 
 text.textContent =
-message.message;
+msg.message;
 
 const time =
 document.createElement("div");
 
-time.className = "time";
+time.className = "message-time";
 
 time.textContent =
-formatTime(message.created_at);
+formatTime(msg.created_at);
 
-box.appendChild(user);
-box.appendChild(text);
-box.appendChild(time);
+item.appendChild(user);
+item.appendChild(text);
+item.appendChild(time);
 
-messagesBox.appendChild(box);
+container.appendChild(item);
 
-messagesBox.scrollTop =
-messagesBox.scrollHeight;
-
+limitVisibleMessages();
 }
 
-/* =========================
-دریافت پیام‌های قبلی
-========================= */
+/* ================================
+محدود کردن پیام‌های نمایشی
+================================= */
 
-async function loadMessages(){
+function limitVisibleMessages() {
 
-const result =
-await db
-.from("messages")
-.select(
-"id,username,message,created_at"
-)
-.order(
-"created_at",
-{ascending:true}
-)
-.limit(100);
+const container =
+document.getElementById("messages");
 
-if(result.error){
+const items =
+container.querySelectorAll(".message-item");
 
-console.error(result.error);
+if (items.length <= 20) return;
 
-status.textContent =
-"🔴 خطای اتصال";
+const extra =
+items.length - 20;
 
-return;
+for (let i = 0; i < extra; i++) {
+
+items[i].remove();
+}
 }
 
-result.data.forEach(addMessage);
-
-status.textContent =
-"🟢 آنلاین";
-
-}
-
-/* =========================
+/* ================================
 ارسال پیام
-========================= */
+================================= */
 
-messageForm.onsubmit =
-async function(event){
+async function sendMessage() {
 
-event.preventDefault();
+const input =
+document.getElementById("messageInput");
 
 const text =
-messageInput.value.trim();
+input.value.trim();
 
-if(!text){
-return;
-}
+if (!text) return;
 
-if(!username){
+if (!currentUsername) {
 
-login.style.display =
-"flex";
+alert("ابتدا وارد حساب شو.");
 
 return;
 }
 
-messageInput.disabled = true;
+input.disabled = true;
 
-const result =
+const { error } =
 await db
 .from("messages")
 .insert({
-username:username,
-message:text
+username: currentUsername,
+message: text
 });
 
-if(result.error){
+input.disabled = false;
 
-console.error(result.error);
+if (error) {
+
+console.error(error);
 
 alert(
-"❌ پیام ارسال نشد"
+"❌ ارسال پیام ناموفق بود:\n" +
+error.message
 );
 
-}else{
-
-messageInput.value = "";
-
+return;
 }
 
-messageInput.disabled = false;
+input.value = "";
+input.focus();
+}
 
-messageInput.focus();
+/* ================================
+ارسال با Enter
+================================= */
 
-};
+document
+.getElementById("messageInput")
+.addEventListener("keydown", function(event) {
 
-/* =========================
-پیام‌های لحظه‌ای
-========================= */
+if (event.key === "Enter") {
 
+event.preventDefault();
+
+sendMessage();
+}
+});
+
+/* ================================
+Realtime
+================================= */
+
+function startRealtime() {
+
+if (realtimeChannel) {
+
+db.removeChannel(realtimeChannel);
+
+realtimeChannel = null;
+}
+
+realtimeChannel =
 db
-.channel("chat-room")
+.channel("public-chat-room")
+
 .on(
 "postgres_changes",
 {
-event:"INSERT",
-schema:"public",
-table:"messages"
+event: "INSERT",
+schema: "public",
+table: "messages"
 },
-function(payload){
+payload => {
 
 addMessage(payload.new);
 
+scrollMessagesToBottom();
 }
 )
-.subscribe(function(state){
 
-if(state === "SUBSCRIBED"){
+.on(
+"postgres_changes",
+{
+event: "DELETE",
+schema: "public",
+table: "messages"
+},
+payload => {
 
-status.textContent =
-"🟢 آنلاین";
+const id =
+payload.old?.id;
 
-}
-
-});
-
-/* =========================
-شروع
-========================= */
+if (!id) {
 
 loadMessages();
+
+return;
+}
+
+const item =
+document.querySelector(
+[data-message-id="${id}"]`
+);
+
+if (item) {
+
+item.remove();
+}
+}
+)
+
+.subscribe();
+}
+
+/* ================================
+اسکرول پایین
+================================= */
+
+function scrollMessagesToBottom() {
+
+const container =
+document.getElementById("messages");
+
+if (!container) return;
+
+setTimeout(() => {
+
+container.scrollTop =
+container.scrollHeight;
+
+}, 50);
+}
+
+/* ================================
+فرمت ساعت
+================================= */
+
+function formatTime(dateString) {
+
+try {
+
+const date =
+new Date(dateString);
+
+return date.toLocaleString(
+"fa-IR",
+{
+hour: "2-digit",
+minute: "2-digit"
+}
+);
+
+} catch {
+
+return "";
+}
+}
+
+/* ================================
+خروج کاربر
+================================= */
+
+function logoutUser() {
+
+currentUsername = "";
+
+localStorage.removeItem(
+"chat_username"
+);
+
+if (realtimeChannel) {
+
+db.removeChannel(realtimeChannel);
+
+realtimeChannel = null;
+}
+
+showHome();
+}
+
+/* ================================
+پنل ادمین
+================================= */
+
+async function openAdminPanel() {
+
+hideAllScreens();
+
+document.getElementById("adminScreen")
+.style.display = "block";
+
+await loadAdminMessages();
+}
+
+/* ================================
+دریافت پیام‌ها برای ادمین
+================================= */
+
+async function loadAdminMessages() {
+
+const container =
+document.getElementById("adminMessages");
+
+container.innerHTML =
+'<div class="empty">⏳ در حال دریافت پیام‌ها...</div>';
+
+const { data, error } =
+await db
+.from("messages")
+.select("id,username,message,created_at")
+.order("created_at", {
+ascending: false
+})
+.limit(20);
+
+if (error) {
+
+console.error(error);
+
+container.innerHTML =
+'<div class="empty">❌ دریافت پیام‌ها ناموفق بود.</div>';
+
+return;
+}
+
+container.innerHTML = "";
+
+if (!data || data.length === 0) {
+
+container.innerHTML =
+'<div class="empty">چتی وجود ندارد.</div>';
+
+return;
+}
+
+data.forEach(msg => {
+
+const item =
+document.createElement("div");
+
+item.className =
+"admin-message";
+
+item.dataset.messageId =
+msg.id;
+
+const top =
+document.createElement("div");
+
+top.className =
+"admin-message-top";
+
+const user =
+document.createElement("div");
+
+user.className =
+"admin-message-user";
+
+user.textContent =
+"👤 " + msg.username;
+
+const deleteButton =
+document.createElement("button");
+
+deleteButton.className =
+"delete-one danger";
+
+deleteButton.textContent =
+"🗑️ حذف";
+
+deleteButton.onclick =
+() => deleteOneMessage(msg.id);
+
+top.appendChild(user);
+top.appendChild(deleteButton);
+
+const text =
+document.createElement("div");
+
+text.className =
+"message-text";
+
+text.textContent =
+msg.message;
+
+const time =
+document.createElement("div");
+
+time.className =
+"message-time";
+
+time.textContent =
+formatTime(msg.created_at);
+
+item.appendChild(top);
+item.appendChild(text);
+item.appendChild(time);
+
+container.appendChild(item);
+});
+}
+
+/* ================================
+حذف یک پیام
+================================= */
+
+async function deleteOneMessage(messageId) {
+
+if (!adminToken) {
+
+alert("دسترسی ادمین معتبر نیست.");
+
+return;
+}
+
+const confirmed =
+confirm("این پیام حذف شود؟");
+
+if (!confirmed) return;
+
+const { data, error } =
+await db.rpc(
+"admin_delete_message",
+{
+p_token: adminToken,
+p_message_id: messageId
+}
+);
+
+if (error) {
+
+console.error(error);
+
+alert(
+"❌ خطا در حذف پیام:\n" +
+error.message
+);
+
+return;
+}
+
+if (!data || !data.success) {
+
+alert(
+"❌ " +
+(data?.error || "حذف پیام انجام نشد.")
+);
+
+return;
+}
+
+await loadAdminMessages();
+}
+
+/* ================================
+حذف کل چت
+================================= */
+
+async function deleteAllMessages() {
+
+if (!adminToken) {
+
+alert("دسترسی ادمین معتبر نیست.");
+
+return;
+}
+
+const confirmed =
+confirm(
+"⚠️ مطمئنی می‌خواهی تمام پیام‌های چت حذف شوند؟"
+);
+
+if (!confirmed) return;
+
+const { data, error } =
+await db.rpc(
+"admin_delete_all_messages",
+{
+p_token: adminToken
+}
+);
+
+if (error) {
+
+console.error(error);
+
+alert(
+"❌ خطا:\n" +
+error.message
+);
+
+return;
+}
+
+if (!data || !data.success) {
+
+alert(
+"❌ " +
+(data?.error || "حذف انجام نشد.")
+);
+
+return;
+}
+
+await loadAdminMessages();
+
+alert("✅ کل چت پاک شد.");
+}
+
+/* ================================
+خروج ادمین
+================================= */
+
+function logoutAdmin() {
+
+adminToken = "";
+
+sessionStorage.removeItem(
+"admin_token"
+);
+
+showHome();
+}
+
+/* ================================
+پاک کردن پیام‌های قدیمی‌تر از ۲۴ ساعت
+================================= */
+
+async function cleanupOldMessages() {
+
+try {
+
+const { error } =
+await db.rpc(
+"cleanup_old_chat_messages"
+);
+
+if (error) {
+
+console.warn(
+"Cleanup error:",
+error
+);
+}
+
+} catch (err) {
+
+console.warn(
+"Cleanup exception:",
+err
+);
+}
+}
+
+/* ================================
+اجرای پاکسازی هر ۲۴ ساعت
+================================= */
+
+setInterval(
+cleanupOldMessages,
+24 * 60 * 60 * 1000
+);
+
+/* ================================
+شروع برنامه
+================================= */
+
+window.addEventListener(
+"load",
+async function() {
+
+await cleanupOldMessages();
+
+if (adminToken) {
+
+openAdminPanel();
+
+return;
+}
+
+if (currentUsername) {
+
+openChat();
+
+return;
+}
+
+showHome();
+}
+);
 
 </script>
 
