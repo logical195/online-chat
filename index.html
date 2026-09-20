@@ -52,9 +52,7 @@ flex-direction:column;
 overflow:hidden;
 }
 
-/* =========================
-HEADER
-========================= */
+/* HEADER */
 
 .header{
 height:65px;
@@ -111,9 +109,7 @@ cursor:pointer;
 font-size:17px;
 }
 
-/* =========================
-MESSAGES
-========================= */
+/* MESSAGES */
 
 .messages{
 flex:1;
@@ -189,9 +185,7 @@ text-align:center;
 font-size:13px;
 }
 
-/* =========================
-DELETE
-========================= */
+/* DELETE */
 
 .message-actions{
 margin-top:7px;
@@ -209,9 +203,7 @@ font-size:10px;
 cursor:pointer;
 }
 
-/* =========================
-INPUT
-========================= */
+/* INPUT */
 
 .input-area{
 padding:10px;
@@ -259,9 +251,7 @@ cursor:pointer;
 background:#555d6d;
 }
 
-/* =========================
-LOGIN
-========================= */
+/* LOGIN */
 
 .login{
 position:fixed;
@@ -369,18 +359,14 @@ margin-top:10px;
 min-height:18px;
 }
 
-/* =========================
-REGISTER
-========================= */
+/* REGISTER */
 
 #registerScreen,
 #adminLogin{
 display:none;
 }
 
-/* =========================
-ADMIN PANEL
-========================= */
+/* ADMIN PANEL */
 
 .admin-panel{
 position:fixed;
@@ -396,6 +382,8 @@ padding:20px;
 .admin-box{
 width:100%;
 max-width:400px;
+max-height:90vh;
+overflow-y:auto;
 background:#202633;
 border-radius:22px;
 padding:25px;
@@ -455,9 +443,7 @@ color:#fff;
 cursor:pointer;
 }
 
-/* =========================
-USER MANAGEMENT
-========================= */
+/* USER MANAGEMENT */
 
 .user-manager{
 margin-top:20px;
@@ -495,9 +481,7 @@ font-size:10px;
 cursor:pointer;
 }
 
-/* =========================
-CHAT CLOSED
-========================= */
+/* CHAT CLOSED */
 
 .closed-banner{
 display:none;
@@ -508,9 +492,7 @@ padding:8px;
 font-size:11px;
 }
 
-/* =========================
-MOBILE
-========================= */
+/* MOBILE */
 
 @media(max-width:500px){
 
@@ -522,6 +504,10 @@ max-width:none;
 max-width:90%;
 }
 
+.admin-box{
+max-height:92vh;
+}
+
 }
 
 </style>
@@ -530,9 +516,7 @@ max-width:90%;
 
 <body>
 
-<!-- =====================================================
-LOGIN
-===================================================== -->
+<!-- LOGIN -->
 
 <div class="login" id="loginScreen">
 
@@ -564,6 +548,7 @@ autocomplete="current-password"
 >
 
 <button
+type="button"
 id="loginBtn"
 class="primary-btn">
 
@@ -572,6 +557,7 @@ class="primary-btn">
 </button>
 
 <button
+type="button"
 id="registerBtn"
 class="secondary-btn">
 
@@ -580,6 +566,7 @@ class="secondary-btn">
 </button>
 
 <button
+type="button"
 id="adminEntry"
 class="text-btn">
 
@@ -596,9 +583,7 @@ class="error">
 
 </div>
 
-<!-- =====================================================
-REGISTER
-===================================================== -->
+<!-- REGISTER -->
 
 <div class="login" id="registerScreen">
 
@@ -638,6 +623,7 @@ autocomplete="new-password"
 >
 
 <button
+type="button"
 id="createAccountBtn"
 class="primary-btn">
 
@@ -646,6 +632,7 @@ class="primary-btn">
 </button>
 
 <button
+type="button"
 id="backLoginBtn"
 class="text-btn">
 
@@ -662,9 +649,7 @@ class="error">
 
 </div>
 
-<!-- =====================================================
-ADMIN LOGIN
-===================================================== -->
+<!-- ADMIN LOGIN -->
 
 <div class="login" id="adminLogin">
 
@@ -693,6 +678,7 @@ placeholder="رمز عبور"
 >
 
 <button
+type="button"
 id="adminLoginBtn"
 class="primary-btn">
 
@@ -701,6 +687,7 @@ class="primary-btn">
 </button>
 
 <button
+type="button"
 id="backFromAdmin"
 class="text-btn">
 
@@ -717,9 +704,7 @@ class="error">
 
 </div>
 
-<!-- =====================================================
-MAIN CHAT
-===================================================== -->
+<!-- MAIN CHAT -->
 
 <div class="app">
 
@@ -750,6 +735,7 @@ class="status">
 </div>
 
 <button
+type="button"
 id="adminBtn"
 class="admin-header-btn"
 style="display:none">
@@ -793,7 +779,7 @@ id="messageInput"
 class="input"
 type="text"
 maxlength="500"
-placeholder="پیامت رو بنویس..."
+placeholder="پیامت رو بنوی..."
 autocomplete="off"
 >
 
@@ -812,9 +798,7 @@ type="submit">
 
 </div>
 
-<!-- =====================================================
-ADMIN PANEL
-===================================================== -->
+<!-- ADMIN PANEL -->
 
 <div
 id="adminPanel"
@@ -837,6 +821,7 @@ ADMIN
 </p>
 
 <button
+type="button"
 id="closeChatBtn"
 class="admin-action close-chat">
 
@@ -845,6 +830,7 @@ class="admin-action close-chat">
 </button>
 
 <button
+type="button"
 id="openChatBtn"
 class="admin-action open-chat">
 
@@ -853,6 +839,7 @@ class="admin-action open-chat">
 </button>
 
 <button
+type="button"
 id="deleteAllBtn"
 class="admin-action delete-all">
 
@@ -873,6 +860,7 @@ class="admin-action delete-all">
 </div>
 
 <button
+type="button"
 id="adminClose"
 class="admin-close">
 
@@ -896,11 +884,60 @@ const SUPABASE_URL =
 const SUPABASE_PUBLISHABLE_KEY =
 "sb_publishable_tSAcYUIqP0OOE4vKscbKwA_MW8ExoLg";
 
-const db =
+let db = null;
+
+/* =====================================================
+START SUPABASE SAFELY
+===================================================== */
+
+function initSupabase(){
+
+try{
+
+if(
+!window.supabase ||
+typeof window.supabase.createClient !== "function"
+){
+
+throw new Error(
+"کتابخانه Supabase بارگذاری نشده است."
+);
+
+}
+
+db =
 window.supabase.createClient(
 SUPABASE_URL,
 SUPABASE_PUBLISHABLE_KEY
 );
+
+return true;
+
+}catch(error){
+
+console.error(
+"Supabase Error:",
+error
+);
+
+const statusElement =
+document.getElementById("status");
+
+if(statusElement){
+
+statusElement.textContent =
+"🔴 خطای اتصال به سرور";
+
+}
+
+return false;
+
+}
+
+}
+
+const supabaseReady =
+initSupabase();
 
 /* =====================================================
 ADMIN
@@ -978,6 +1015,19 @@ const usersList =
 document.getElementById("usersList");
 
 /* =====================================================
+DATABASE CHECK
+===================================================== */
+
+function databaseError(){
+
+alert(
+"❌ اتصال به Supabase برقرار نیست.\n\n" +
+"لطفاً اینترنت و تنظیمات Supabase را بررسی کن."
+);
+
+}
+
+/* =====================================================
 SHA-256
 ===================================================== */
 
@@ -1021,6 +1071,8 @@ registerScreen.style.display =
 adminLogin.style.display =
 "none";
 
+loginError.textContent = "";
+
 }
 
 /* =====================================================
@@ -1029,7 +1081,8 @@ REGISTER SCREEN
 
 document
 .getElementById("registerBtn")
-.onclick =
+.addEventListener(
+"click",
 function(){
 
 loginScreen.style.display =
@@ -1038,9 +1091,15 @@ loginScreen.style.display =
 registerScreen.style.display =
 "flex";
 
+adminLogin.style.display =
+"none";
+
+registerError.textContent = "";
+
 registerUsername.focus();
 
-};
+}
+);
 
 /* =====================================================
 BACK LOGIN
@@ -1048,12 +1107,14 @@ BACK LOGIN
 
 document
 .getElementById("backLoginBtn")
-.onclick =
+.addEventListener(
+"click",
 function(){
 
 showLogin();
 
-};
+}
+);
 
 /* =====================================================
 REGISTER
@@ -1061,10 +1122,18 @@ REGISTER
 
 document
 .getElementById("createAccountBtn")
-.onclick =
+.addEventListener(
+"click",
 async function(){
 
 registerError.textContent = "";
+
+if(!supabaseReady){
+
+databaseError();
+return;
+
+}
 
 const username =
 registerUsername.value.trim();
@@ -1102,6 +1171,18 @@ return;
 
 }
 
+const button =
+document.getElementById(
+"createAccountBtn"
+);
+
+button.disabled = true;
+
+button.textContent =
+"در حال ثبت نام...";
+
+try{
+
 const passwordHash =
 await hashPassword(password);
 
@@ -1112,10 +1193,14 @@ await db
 username:username,
 password_hash:passwordHash
 })
-.select("id,username,banned_until")
+.select(
+"id,username,banned_until"
+)
 .single();
 
 if(result.error){
+
+console.error(result.error);
 
 if(
 result.error.code === "23505"
@@ -1126,10 +1211,9 @@ registerError.textContent =
 
 }else{
 
-console.error(result.error);
-
 registerError.textContent =
-"❌ ثبت نام انجام نشد.";
+"❌ ثبت نام انجام نشد: " +
+result.error.message;
 
 }
 
@@ -1157,7 +1241,24 @@ registerScreen.style.display =
 
 messageInput.focus();
 
-};
+}catch(error){
+
+console.error(error);
+
+registerError.textContent =
+"❌ خطایی هنگام ثبت نام رخ داد.";
+
+}finally{
+
+button.disabled = false;
+
+button.textContent =
+"ساخت حساب 🚀";
+
+}
+
+}
+);
 
 /* =====================================================
 LOGIN
@@ -1165,10 +1266,18 @@ LOGIN
 
 document
 .getElementById("loginBtn")
-.onclick =
+.addEventListener(
+"click",
 async function(){
 
 loginError.textContent = "";
+
+if(!supabaseReady){
+
+databaseError();
+return;
+
+}
 
 const username =
 loginUsername.value.trim();
@@ -1184,6 +1293,18 @@ loginError.textContent =
 return;
 
 }
+
+const button =
+document.getElementById(
+"loginBtn"
+);
+
+button.disabled = true;
+
+button.textContent =
+"در حال ورود...";
+
+try{
 
 const passwordHash =
 await hashPassword(password);
@@ -1205,7 +1326,8 @@ if(result.error){
 console.error(result.error);
 
 loginError.textContent =
-"خطا در اتصال به سرور.";
+"❌ خطا در اتصال به سرور: " +
+result.error.message;
 
 return;
 
@@ -1276,40 +1398,87 @@ loginPassword.value = "";
 loginScreen.style.display =
 "none";
 
+registerScreen.style.display =
+"none";
+
+adminLogin.style.display =
+"none";
+
 messageInput.focus();
 
-};
+}catch(error){
+
+console.error(error);
+
+loginError.textContent =
+"❌ خطایی هنگام ورود رخ داد.";
+
+}finally{
+
+button.disabled = false;
+
+button.textContent =
+"ورود 🚀";
+
+}
+
+}
+);
+
+/* =====================================================
+ADMIN LOGIN SCREEN
+===================================================== */
+
+document
+.getElementById("adminEntry")
+.addEventListener(
+"click",
+function(){
+
+loginScreen.style.display =
+"none";
+
+registerScreen.style.display =
+"none";
+
+adminLogin.style.display =
+"flex";
+
+adminError.textContent = "";
+
+document
+.getElementById("adminUsername")
+.focus();
+
+}
+);
+
+/* =====================================================
+BACK FROM ADMIN
+===================================================== */
+
+document
+.getElementById("backFromAdmin")
+.addEventListener(
+"click",
+function(){
+
+showLogin();
+
+}
+);
 
 /* =====================================================
 ADMIN LOGIN
 ===================================================== */
 
 document
-.getElementById("adminEntry")
-.onclick =
-function(){
-
-loginScreen.style.display =
-"none";
-
-adminLogin.style.display =
-"flex";
-
-};
-
-document
-.getElementById("backFromAdmin")
-.onclick =
-function(){
-
-showLogin();
-
-};
-
-document
 .getElementById("adminLoginBtn")
-.onclick =
+.addEventListener(
+"click",
 function(){
+
+adminError.textContent = "";
 
 const username =
 document
@@ -1335,6 +1504,9 @@ adminLogin.style.display =
 loginScreen.style.display =
 "none";
 
+registerScreen.style.display =
+"none";
+
 adminBtn.style.display =
 "block";
 
@@ -1349,7 +1521,48 @@ adminError.textContent =
 
 }
 
-};
+}
+);
+
+/* =====================================================
+ENTER KEY LOGIN
+===================================================== */
+
+loginPassword.addEventListener(
+"keydown",
+function(event){
+
+if(event.key === "Enter"){
+
+document
+.getElementById("loginBtn")
+.click();
+
+}
+
+}
+);
+
+/* =====================================================
+ENTER KEY ADMIN
+===================================================== */
+
+document
+.getElementById("adminPassword")
+.addEventListener(
+"keydown",
+function(event){
+
+if(event.key === "Enter"){
+
+document
+.getElementById("adminLoginBtn")
+.click();
+
+}
+
+}
+);
 
 /* =====================================================
 FORMAT TIME
@@ -1378,7 +1591,9 @@ if(
 !message ||
 !message.id
 ){
+
 return;
+
 }
 
 if(
@@ -1397,7 +1612,9 @@ const empty =
 document.getElementById("empty");
 
 if(empty){
+
 empty.remove();
+
 }
 
 const box =
@@ -1468,20 +1685,25 @@ actions.className =
 const deleteBtn =
 document.createElement("button");
 
+deleteBtn.type =
+"button";
+
 deleteBtn.className =
 "delete-message";
 
 deleteBtn.textContent =
 "🗑️ حذف پیام";
 
-deleteBtn.onclick =
+deleteBtn.addEventListener(
+"click",
 function(){
 
 deleteMessage(
 message.id
 );
 
-};
+}
+);
 
 actions.appendChild(
 deleteBtn
@@ -1507,6 +1729,17 @@ LOAD MESSAGES
 ===================================================== */
 
 async function loadMessages(){
+
+if(!supabaseReady){
+
+status.textContent =
+"🔴 خطای اتصال";
+
+return;
+
+}
+
+try{
 
 const result =
 await db
@@ -1540,10 +1773,19 @@ addMessage
 status.textContent =
 "🟢 آنلاین";
 
+}catch(error){
+
+console.error(error);
+
+status.textContent =
+"🔴 خطای اتصال";
+
+}
+
 }
 
 /* =====================================================
-DELETE ONE MESSAGE
+DELETE MESSAGE
 ===================================================== */
 
 async function deleteMessage(id){
@@ -1562,32 +1804,41 @@ return;
 
 }
 
+if(!supabaseReady){
+
+databaseError();
+return;
+
+}
+
 const result =
 await db
 .from("messages")
 .delete()
-.eq("id",id);
+.eq(
+"id",
+id
+);
 
 if(result.error){
 
 console.error(result.error);
 
 alert(
-"❌ حذف پیام انجام نشد."
+"❌ حذف پیام انجام نشد.\n\n" +
+result.error.message
 );
 
 return;
 
 }
 
-removeMessageFromScreen(
-id
-);
+removeMessageFromScreen(id);
 
 }
 
 /* =====================================================
-REMOVE MESSAGE UI
+REMOVE MESSAGE
 ===================================================== */
 
 function removeMessageFromScreen(id){
@@ -1600,7 +1851,9 @@ id +
 );
 
 if(element){
+
 element.remove();
+
 }
 
 checkEmpty();
@@ -1636,7 +1889,8 @@ messagesBox.innerHTML = &lt;div id="empty" class="empty"&gt; هنوز پیامی
 SEND MESSAGE
 ===================================================== */
 
-messageForm.onsubmit =
+messageForm.addEventListener(
+"submit",
 async function(event){
 
 event.preventDefault();
@@ -1652,7 +1906,10 @@ return;
 
 }
 
-if(!chatIsOpen && !isAdmin){
+if(
+!chatIsOpen &&
+!isAdmin
+){
 
 alert(
 "🔴 چت در حال حاضر بسته است."
@@ -1666,7 +1923,17 @@ const text =
 messageInput.value.trim();
 
 if(!text){
+
 return;
+
+}
+
+if(!supabaseReady){
+
+databaseError();
+
+return;
+
 }
 
 messageInput.disabled =
@@ -1680,14 +1947,14 @@ isAdmin
 ? "مدیر"
 : currentUser.username;
 
+try{
+
 const result =
 await db
 .from("messages")
 .insert({
-
 username:sender,
 message:text
-
 });
 
 if(result.error){
@@ -1695,7 +1962,8 @@ if(result.error){
 console.error(result.error);
 
 alert(
-"❌ پیام ارسال نشد."
+"❌ پیام ارسال نشد.\n\n" +
+result.error.message
 );
 
 }else{
@@ -1703,6 +1971,16 @@ alert(
 messageInput.value = "";
 
 }
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"❌ خطایی هنگام ارسال پیام رخ داد."
+);
+
+}finally{
 
 messageInput.disabled =
 false;
@@ -1712,7 +1990,10 @@ false;
 
 messageInput.focus();
 
-};
+}
+
+}
+);
 
 /* =====================================================
 CHAT SETTINGS
@@ -1720,11 +2001,22 @@ CHAT SETTINGS
 
 async function loadChatSettings(){
 
+if(!supabaseReady){
+return;
+}
+
+try{
+
 const result =
 await db
 .from("chat_settings")
-.select("chat_open")
-.eq("id",1)
+.select(
+"chat_open"
+)
+.eq(
+"id",
+1
+)
 .single();
 
 if(result.error){
@@ -1738,6 +2030,12 @@ return;
 setChatState(
 result.data.chat_open
 );
+
+}catch(error){
+
+console.error(error);
+
+}
 
 }
 
@@ -1762,7 +2060,7 @@ sendBtn.disabled =
 false;
 
 messageInput.placeholder =
-"پیامت رو بنویس...";
+"پیامت رو بنوی...";
 
 }else{
 
@@ -1792,11 +2090,19 @@ CLOSE CHAT
 
 document
 .getElementById("closeChatBtn")
-.onclick =
+.addEventListener(
+"click",
 async function(){
 
 if(!isAdmin){
 return;
+}
+
+if(!supabaseReady){
+
+databaseError();
+return;
+
 }
 
 const result =
@@ -1805,14 +2111,18 @@ await db
 .update({
 chat_open:false
 })
-.eq("id",1);
+.eq(
+"id",
+1
+);
 
 if(result.error){
 
 console.error(result.error);
 
 alert(
-"❌ بستن چت انجام نشد."
+"❌ بستن چت انجام نشد.\n\n" +
+result.error.message
 );
 
 return;
@@ -1821,7 +2131,8 @@ return;
 
 setChatState(false);
 
-};
+}
+);
 
 /* =====================================================
 OPEN CHAT
@@ -1829,11 +2140,19 @@ OPEN CHAT
 
 document
 .getElementById("openChatBtn")
-.onclick =
+.addEventListener(
+"click",
 async function(){
 
 if(!isAdmin){
 return;
+}
+
+if(!supabaseReady){
+
+databaseError();
+return;
+
 }
 
 const result =
@@ -1842,14 +2161,18 @@ await db
 .update({
 chat_open:true
 })
-.eq("id",1);
+.eq(
+"id",
+1
+);
 
 if(result.error){
 
 console.error(result.error);
 
 alert(
-"❌ باز کردن چت انجام نشد."
+"❌ باز کردن چت انجام نشد.\n\n" +
+result.error.message
 );
 
 return;
@@ -1858,7 +2181,8 @@ return;
 
 setChatState(true);
 
-};
+}
+);
 
 /* =====================================================
 DELETE ALL
@@ -1866,7 +2190,8 @@ DELETE ALL
 
 document
 .getElementById("deleteAllBtn")
-.onclick =
+.addEventListener(
+"click",
 async function(){
 
 if(!isAdmin){
@@ -1879,6 +2204,13 @@ if(
 )
 ){
 
+return;
+
+}
+
+if(!supabaseReady){
+
+databaseError();
 return;
 
 }
@@ -1898,7 +2230,8 @@ if(result.error){
 console.error(result.error);
 
 alert(
-"❌ پاک کردن چت انجام نشد."
+"❌ پاک کردن چت انجام نشد.\n\n" +
+result.error.message
 );
 
 return;
@@ -1907,7 +2240,8 @@ return;
 
 messagesBox.innerHTML = &lt;div id="empty" class="empty"&gt; چت پاک شد 🧹 &lt;/div&gt;;
 
-};
+}
+);
 
 /* =====================================================
 LOAD USERS
@@ -1918,6 +2252,17 @@ async function loadUsers(){
 if(!isAdmin){
 return;
 }
+
+if(!supabaseReady){
+
+usersList.textContent =
+"خطا در اتصال به سرور.";
+
+return;
+
+}
+
+try{
 
 const result =
 await db
@@ -1975,13 +2320,17 @@ user.username;
 const kick =
 document.createElement("button");
 
+kick.type =
+"button";
+
 kick.className =
 "kick-btn";
 
 kick.textContent =
 "👢 اخراج ۱۰ دقیقه";
 
-kick.onclick =
+kick.addEventListener(
+"click",
 function(){
 
 kickUser(
@@ -1989,7 +2338,8 @@ user.id,
 user.username
 );
 
-};
+}
+);
 
 row.appendChild(name);
 row.appendChild(kick);
@@ -1998,6 +2348,15 @@ usersList.appendChild(row);
 
 }
 );
+
+}catch(error){
+
+console.error(error);
+
+usersList.textContent =
+"خطا در دریافت کاربران.";
+
+}
 
 }
 
@@ -2026,6 +2385,13 @@ return;
 
 }
 
+if(!supabaseReady){
+
+databaseError();
+return;
+
+}
+
 const until =
 new Date(
 Date.now() +
@@ -2049,7 +2415,8 @@ if(result.error){
 console.error(result.error);
 
 alert(
-"❌ اخراج کاربر انجام نشد."
+"❌ اخراج کاربر انجام نشد.\n\n" +
+result.error.message
 );
 
 return;
@@ -2067,32 +2434,70 @@ loadUsers();
 }
 
 /* =====================================================
-ADMIN PANEL
+ADMIN PANEL OPEN
 ===================================================== */
 
-adminBtn.onclick =
+adminBtn.addEventListener(
+"click",
 function(){
+
+if(!isAdmin){
+return;
+}
 
 adminPanel.style.display =
 "flex";
 
 loadUsers();
 
-};
+}
+);
+
+/* =====================================================
+ADMIN PANEL CLOSE
+===================================================== */
 
 document
 .getElementById("adminClose")
-.onclick =
+.addEventListener(
+"click",
 function(){
 
 adminPanel.style.display =
 "none";
 
-};
+}
+);
+
+/* =====================================================
+CLOSE PANEL WHEN CLICK OUTSIDE
+===================================================== */
+
+adminPanel.addEventListener(
+"click",
+function(event){
+
+if(event.target === adminPanel){
+
+adminPanel.style.display =
+"none";
+
+}
+
+}
+);
 
 /* =====================================================
 REALTIME
 ===================================================== */
+
+function startRealtime(){
+
+if(!supabaseReady){
+return;
+}
+
+try{
 
 db
 .channel("chat-room")
@@ -2122,7 +2527,10 @@ table:"messages"
 },
 function(payload){
 
-if(payload.old && payload.old.id){
+if(
+payload.old &&
+payload.old.id
+){
 
 removeMessageFromScreen(
 payload.old.id
@@ -2160,6 +2568,11 @@ payload.new.chat_open
 .subscribe(
 function(state){
 
+console.log(
+"Realtime:",
+state
+);
+
 if(
 state === "SUBSCRIBED"
 ){
@@ -2172,15 +2585,44 @@ status.textContent =
 }
 );
 
+}catch(error){
+
+console.error(
+"Realtime Error:",
+error
+);
+
+}
+
+}
+
 /* =====================================================
-START
+INITIALIZE
 ===================================================== */
 
-loadMessages();
+async function initializeApp(){
 
-loadChatSettings();
+if(!supabaseReady){
+
+status.textContent =
+"🔴 اتصال برقرار نیست";
+
+return;
+
+}
+
+await loadMessages();
+
+await loadChatSettings();
+
+startRealtime();
+
+}
+
+initializeApp();
 
 </script>
 
 </body>
+
 </html>
